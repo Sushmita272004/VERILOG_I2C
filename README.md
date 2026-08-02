@@ -112,37 +112,3 @@ Use **View → Zoom → Zoom Full** to display the complete simulation interval.
 | Reset | Asserted initially, then de-asserted |
 | Waveform output | `i2c_waveform.vcd` |
 
-## Current limitations
-
-The current source should be treated as a behavioural scaffold, not a finished I²C implementation:
-
-- `scl` is initialized high but is not toggled by the master. Consequently, the slave FSM—which is sensitive to `negedge scl`—does not receive a complete clocked I²C transaction.
-- The master loads address and data registers but does not shift and transmit all eight bits across SCL cycles.
-- The master releases `SDA` for acknowledgement but does not sample or validate the slave ACK.
-- Read transfers (`rw = 1`) are not implemented; the `rw` bit is only included when loading the address byte.
-- Open-drain pull-up behavior is not explicitly modelled. A complete model should use pull-ups and only actively drive `SDA`/`SCL` low.
-- The testbench’s comment labels `#10` as a 10 ns period, but under `` `timescale 1ms/1ns`` it represents 10 ms per half-cycle. Update the timescale or comment if nanosecond timing is intended.
-- There are no automated assertions or self-checking pass/fail criteria.
-
-## Recommended next improvements
-
-1. Add an SCL clock-divider/enable and generate SCL low/high phases.
-2. Shift one address/data bit per SCL cycle, MSB first.
-3. Sample the ACK bit during the ninth SCL clock and report NACKs.
-4. Add complete read-path support, including master ACK/NACK after received bytes.
-5. Model open-drain lines with pull-ups and add protocol assertions.
-6. Add test cases for matching/mismatching addresses, write data, read data, ACK, and NACK behavior.
-
-## Git hygiene
-
-Generated simulator and waveform files should not be committed. Add this to `.gitignore`:
-
-```gitignore
-*.vvp
-*.vcd
-*.gtkw
-```
-
-## License
-
-No license file is currently included. Add a license (for example, MIT) before distributing the project if you want to define reuse permissions.
