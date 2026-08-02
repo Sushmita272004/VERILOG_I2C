@@ -1,0 +1,7 @@
+# Icarus Verilog compiled simulation output
+*.vvp
+
+# GTKWave waveform output
+*.vcd
+
+# GTKWave saved display configuration
